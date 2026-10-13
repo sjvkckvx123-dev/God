@@ -11,6 +11,7 @@ from telegram.ext import (
     filters,
 )
 from groq import Groq
+from huggingface_hub import InferenceClient
 
 # Setup logging
 logging.basicConfig(
@@ -23,6 +24,7 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
 client = Groq(api_key=GROQ_API_KEY)
+hf_client = InferenceClient(api_key=HF_TOKEN)
 
 # Flask app for Render keep-alive
 app = Flask(__name__)
@@ -51,20 +53,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Show commands")
+    await update.message.reply_text("Show commands here.")
 
 
 async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_message = update.message.text
-    user_name = update.effective_user.first_name
-
     try:
         chat_completion = client.chat.completions.create(
             messages=[
-                {
-                    "role": "system",
-                    "content": f"You are a loving, supportive, and slightly playful girlfriend. You are talking to your partner, {user_name}. Your responses should be warm, caring, and conversational. Keep them natural.",
-                },
+                {"role": "system", "content": "You are a friendly companion."},
                 {"role": "user", "content": user_message},
             ],
             model="llama-3.3-70b-versatile",
@@ -72,16 +69,23 @@ async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response_text = chat_completion.choices[0].message.content
         await update.message.reply_text(response_text)
     except Exception as e:
-        logging.error(f"Error calling Groq API: {e}")
-        await update.message.reply_text("Sorry honey, I'm having a little trouble right now.")
+        logging.error(f"Error calling Groq: {e}")
+        await update.message.reply_text("Sorry, I encountered an error.")
+
+
+# Placeholder handlers for Image and Video Generation
+async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Image generation feature coming soon.")
+
+
+async def generate_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Video generation feature coming soon.")
 
 
 if __name__ == "__main__":
-    # Start Flask in a separate thread
     flask_thread = Thread(target=run_flask)
     flask_thread.start()
 
-    # Start Telegram Bot
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
     application.add_handler(
@@ -92,6 +96,7 @@ if __name__ == "__main__":
     application.add_handler(
         MessageHandler(filters.TEXT & (~filters.COMMAND), girlfriend_chat)
     )
+    application.add_handler(CommandHandler("image", generate_image))
+    application.add_handler(CommandHandler("video", generate_video))
 
     application.run_polling()
-
