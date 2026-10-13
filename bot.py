@@ -9,7 +9,7 @@ await update.message.reply_text("Hello! I am your new bot.")
 async def echo(update: Update, context):
 user_message = update.message.text
 await update.message.reply_text(f"You said: {user_message}")
-flask_app = Flask__name_
+flask_app = Flask(__name__)
 @flask_app.route("/")
 def index():
 return "Bot is running!"
