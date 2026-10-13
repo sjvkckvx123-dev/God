@@ -10,6 +10,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from groq import Groq
 
 # Setup logging
 logging.basicConfig(
@@ -18,6 +19,9 @@ logging.basicConfig(
 )
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+
+client = Groq(api_key=GROQ_API_KEY)
 
 # Flask app for Render keep-alive
 app = Flask(__name__)
@@ -49,11 +53,26 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Show commands")
 
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_message = update.message.text
     user_name = update.effective_user.first_name
-    await update.message.reply_text(
-        f"Hello {user_name}! You said: {update.message.text}"
-    )
+
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are a loving, supportive, and slightly playful girlfriend. You are talking to your partner, {user_name}. Your responses should be warm, caring, and conversational. Keep them natural.",
+                },
+                {"role": "user", "content": user_message},
+            ],
+            model="llama3-8b-8192",
+        )
+        response_text = chat_completion.choices[0].message.content
+        await update.message.reply_text(response_text)
+    except Exception as e:
+        logging.error(f"Error calling Groq API: {e}")
+        await update.message.reply_text("Sorry honey, I'm having a little trouble right now.")
 
 
 if __name__ == "__main__":
@@ -64,9 +83,14 @@ if __name__ == "__main__":
     # Start Telegram Bot
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome))
+    application.add_handler(
+        MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome)
+    )
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), echo))
+    application.add_handler(
+        MessageHandler(filters.TEXT & (~filters.COMMAND), girlfriend_chat)
+    )
 
     application.run_polling()
+
