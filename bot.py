@@ -1,75 +1,72 @@
 import os
 import logging
+from flask import Flask
+from threading import Thread
 from telegram import Update
 from telegram.ext import (
-    Application,
+    ApplicationBuilder,
+    ContextTypes,
     CommandHandler,
     MessageHandler,
-    ChatMemberHandler,
-    ContextTypes,
     filters,
 )
 
-# Logging
+# Setup logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
 
-# Get token securely from Render environment variables
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-# Welcome new members
+# Flask app for Render keep-alive
+app = Flask(__name__)
+
+
+@app.route("/")
+def home():
+    return "Bot is running!"
+
+
+def run_flask():
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
+
+# Telegram Bot Handlers
 async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for member in update.message.new_chat_members:
         await update.message.reply_text(
-            f"👋 Welcome {member.mention_html()}!\n\n"
-            "Please follow the group rules and be respectful.",
+            f"Welcome {member.mention_html()}! Please follow the group rules.",
             parse_mode="HTML",
         )
 
-# Start command
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 Hello! I am your Group Management Bot.\n\n"
-        "/help - Show commands"
-    )
+    await update.message.reply_text("Hello! I am your Group Management Bot.")
 
-# Help command
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "📜 GROUP BOT COMMANDS\n\n"
-        "/start - Start bot\n"
-        "/help - Show help\n"
-        "/id - Show chat ID\n"
-        "/ban - Reply to a user's message to ban them\n"
-        "/unban USER_ID - Unban a user\n"
-        "/mute - Reply to a user's message to mute them\n"
-        "/unmute - Reply to a user's message to unmute them\n"
-        "/admins - List group admins"
-    )
+    await update.message.reply_text("Show commands")
 
-# Chat ID
-async def chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"Chat ID: {update.effective_chat.id}")
 
-# Echo handler for text messages
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name = update.effective_user.first_name
-    await update.message.reply_text(f"Hello {user_name}! You said: {update.message.text}")
-    
+    await update.message.reply_text(
+        f"Hello {user_name}! You said: {update.message.text}"
+    )
 
-# Main function
-def main():
-    application = Application.builder().token(BOT_TOKEN).build()
 
-    application.add_handler(ChatMemberHandler(welcome, ChatMemberHandler.CHAT_MEMBER))
+if __name__ == "__main__":
+    # Start Flask in a separate thread
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
+
+    # Start Telegram Bot
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome))
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("id", chat_id))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), echo))
 
     application.run_polling()
-
-if __name__ == "__main__":
-    main()
