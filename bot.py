@@ -55,7 +55,9 @@ async def chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Echo handler for text messages
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(update.message.text)
+    user_name = update.effective_user.first_name
+    await update.message.reply_text(f"Hello {user_name}! You said: {update.message.text}")
+    
 
 # Main function
 def main():
