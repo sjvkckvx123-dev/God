@@ -21,9 +21,9 @@ flask_app = Flask(__name__)
 
 @flask_app.route("/")
 def index():
-    നിങ്ങൾക്കായി সম্পূর্ণ കോഡ് സ്നിപ്പറ്റ് താഴെ നൽകുന്നു:
+    
 
-```python
+
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from flask import Flask
