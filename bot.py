@@ -66,7 +66,7 @@ async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 },
                 {"role": "user", "content": user_message},
             ],
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
         )
         response_text = chat_completion.choices[0].message.content
         await update.message.reply_text(response_text)
