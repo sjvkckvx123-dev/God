@@ -64,7 +64,7 @@ async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 {"role": "system", "content": "You are a friendly companion."},
                 {"role": "user", "content": user_message},
             ],
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-70b-versatile",
         )
         response_text = chat_completion.choices[0].message.content
         await update.message.reply_text(response_text)
@@ -99,4 +99,14 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("image", generate_image))
     application.add_handler(CommandHandler("video", generate_video))
 
-    application.run_polling()
+    WEBHOOK_URL = (
+        f"https://hinata-cd7y.onrender.com/{BOT_TOKEN}"  # Replace with your URL
+    )
+
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=int(os.environ.get("PORT", 10000)),
+        url_path=BOT_TOKEN,
+        webhook_url=WEBHOOK_URL,
+)
+        
