@@ -1,26 +1,73 @@
 from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from flask import Flask
+import threading
+import os
 
-# Replace with your actual token from BotFather
-TOKEN = "8969988100:AAEHP3WAzpYrmBknOyL9zzQBSDLDia4hkTQ"
+TOKEN = "8969988100:AAEHP3WAzpYrmBkn0yL9zzQBSDLdia4hkTQ"
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def start(update: Update, context):
     await update.message.reply_text("Hello! I am your new bot.")
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def echo(update: Update, context):
     user_message = update.message.text
     await update.message.reply_text(f"You said: {user_message}")
+
+
+flask_app = Flask(__name__)
+
+
+@flask_app.route("/")
+def index():
+    നിങ്ങൾക്കായി সম্পূর্ণ കോഡ് സ്നിപ്പറ്റ് താഴെ നൽകുന്നു:
+
+```python
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from flask import Flask
+import threading
+import os
+
+TOKEN = "8969988100:AAEHP3WAzpYrmBkn0yL9zzQBSDLdia4hkTQ"
+
+
+async def start(update: Update, context):
+    await update.message.reply_text("Hello! I am your new bot.")
+
+
+async def echo(update: Update, context):
+    user_message = update.message.text
+    await update.message.reply_text(f"You said: {user_message}")
+
+
+flask_app = Flask(__name__)
+
+
+@flask_app.route("/")
+def index():
+    return "Bot is running!"
+
+
+def run_flask():
+    flask_app.run(
+        host="0.0.0.0", port=int(os.environ.get("PORT", 10000))
+    )
+
 
 def main():
     app = Application.builder().token(TOKEN).build()
 
-    # Handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-    # Start the bot
+    threading.Thread(target=run_flask).start()
+
     print("Bot is running...")
     app.run_polling()
 
+
 if __name__ == "__main__":
     main()
+
