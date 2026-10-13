@@ -20,6 +20,7 @@ logging.basicConfig(
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+HF_TOKEN = os.environ.get("HF_TOKEN")
 
 client = Groq(api_key=GROQ_API_KEY)
 
