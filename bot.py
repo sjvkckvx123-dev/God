@@ -17,7 +17,7 @@ logging.basicConfig(
 )
 
 # Get token securely from Render environment variables
-BOT_TOKEN = os.getenv("8969988100:AAHXKslTAdBX6ZI3dE6FTcfndz0XoA1D_BU")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # Welcome new members
 async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
