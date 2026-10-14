@@ -100,7 +100,7 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler("video", generate_video))
 
     WEBHOOK_URL = (
-        f"https://hinata-cd7y.onrender.com/{BOT_TOKEN}"  # Replace with your URL
+        f"https://hinata-Ouv9.onrender.com/{BOT_TOKEN}"  # Replace with your URL
     )
 
     application.run_webhook(
