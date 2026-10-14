@@ -1,5 +1,7 @@
-groq
-huggingface_hub
-flask
-python-telegram-bot
-Pillow
+packages = [
+    "groq",
+    "huggingface_hub",
+    "Flask",
+    "python-telegram-bot[webhooks]",
+    "Pillow",
+]
