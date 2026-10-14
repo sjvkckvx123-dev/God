@@ -1,7 +1,6 @@
-packages = [
-    "groq",
-    "huggingface_hub",
-    "Flask",
-    "python-telegram-bot[webhooks]",
-    "Pillow",
-]
+
+groq
+huggingface_hub
+Flask
+python-telegram-bot webhooks
+Pillow
