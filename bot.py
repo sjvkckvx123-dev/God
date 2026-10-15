@@ -103,10 +103,6 @@ if __name__ == "__main__":
         f"https://hinata-Ouv9.onrender.com/{BOT_TOKEN}"  # Replace with your URL
     )
 
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 10000)),
-        url_path=BOT_TOKEN,
-        webhook_url=WEBHOOK_URL,
+    application.run_polling
 )
         
