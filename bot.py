@@ -14,7 +14,7 @@ async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("I am your friendly companion.")
 
 if __name__ == '__main__':
-    TOKEN = "YOUR_BOT_TOKEN"
+    TOKEN = "8969988100:AAEef8-Hg8MaejF69fAQgu7Vy8UoPpOO"
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
