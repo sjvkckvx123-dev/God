@@ -8,7 +8,7 @@ async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Image generation feature coming soon.")
 
 async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("I am listening...")
+    await update.message.reply_text("I am listening my love  ❤️...")
 
 async def girlfriend_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("I am your friendly companion.")
