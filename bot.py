@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Hello! I am ready to chat.")
+    await update.message.reply_text("Hi i am hinata like a girl friend .")
 
 async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Image generation feature coming soon.")
